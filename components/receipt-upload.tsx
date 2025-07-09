@@ -112,7 +112,7 @@ export default function ReceiptUpload() {
         videoRef.current.srcObject = stream
         setShowCamera(true)
       }
-    } catch (_) {
+    } catch {
       setError("Camera access denied or not available")
     }
   }
