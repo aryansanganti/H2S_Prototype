@@ -49,7 +49,6 @@ export default function ReceiptUpload() {
     setIsProcessing(true)
     setUploadProgress(0)
 
-    // Simulate processing with progress
     const progressInterval = setInterval(() => {
       setUploadProgress((prev) => {
         if (prev >= 90) {
@@ -60,12 +59,10 @@ export default function ReceiptUpload() {
       })
     }, 200)
 
-    // Simulate API call to Gemini for receipt processing
     setTimeout(() => {
       clearInterval(progressInterval)
       setUploadProgress(100)
 
-      // Mock processed receipt data
       const mockReceipt: ProcessedReceipt = {
         store: "Whole Foods Market",
         date: "2024-01-15",
@@ -115,7 +112,7 @@ export default function ReceiptUpload() {
         videoRef.current.srcObject = stream
         setShowCamera(true)
       }
-    } catch (err) {
+    } catch (_) {
       setError("Camera access denied or not available")
     }
   }
@@ -139,7 +136,6 @@ export default function ReceiptUpload() {
         }, "image/jpeg")
       }
 
-      // Stop camera
       const stream = videoRef.current.srcObject as MediaStream
       stream?.getTracks().forEach((track) => track.stop())
       setShowCamera(false)
@@ -148,8 +144,6 @@ export default function ReceiptUpload() {
 
   const addToWallet = async () => {
     if (!processedReceipt) return
-
-    // Simulate adding to Google Wallet
     alert("Receipt pass added to Google Wallet successfully!")
   }
 
@@ -208,7 +202,6 @@ export default function ReceiptUpload() {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Receipt Summary */}
               <div className="space-y-4">
                 <div>
                   <h3 className="font-semibold text-lg">{processedReceipt.store}</h3>
@@ -236,7 +229,6 @@ export default function ReceiptUpload() {
                 </Button>
               </div>
 
-              {/* Items List */}
               <div>
                 <h4 className="font-semibold mb-3">Items ({processedReceipt.items.length})</h4>
                 <div className="space-y-2 max-h-64 overflow-y-auto">
@@ -290,7 +282,6 @@ export default function ReceiptUpload() {
             </div>
           ) : (
             <>
-              {/* Upload Options */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Button variant="outline" className="h-32 flex-col gap-2 bg-transparent" onClick={startCamera}>
                   <Camera className="h-8 w-8" />
@@ -309,7 +300,6 @@ export default function ReceiptUpload() {
                 </Button>
               </div>
 
-              {/* Drag and Drop Area */}
               <div
                 className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${dragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25"
                   }`}
@@ -335,7 +325,6 @@ export default function ReceiptUpload() {
         </CardContent>
       </Card>
 
-      {/* Features */}
       <Card>
         <CardHeader>
           <CardTitle>AI-Powered Features</CardTitle>
@@ -349,7 +338,7 @@ export default function ReceiptUpload() {
               <div>
                 <h4 className="font-medium">Multimodal Analysis</h4>
                 <p className="text-sm text-muted-foreground">
-                  Process receipts in any language using Gemini's advanced vision capabilities
+                  Process receipts in any language using Gemini&apos;s advanced vision capabilities
                 </p>
               </div>
             </div>
