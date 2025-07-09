@@ -311,9 +311,8 @@ export default function ReceiptUpload() {
 
               {/* Drag and Drop Area */}
               <div
-                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
-                  dragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25"
-                }`}
+                className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${dragActive ? "border-primary bg-primary/5" : "border-muted-foreground/25"
+                  }`}
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
@@ -369,6 +368,8 @@ export default function ReceiptUpload() {
           </div>
         </CardContent>
       </Card>
+
+      <p>Don&apos;t forget to check out your Google Wallet app for the latest receipt passes!</p>
     </div>
   )
 }

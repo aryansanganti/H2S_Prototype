@@ -1,5 +1,7 @@
 "use client"
 
+/// <reference lib="dom" />
+
 import { useState, useRef, useEffect } from "react"
 import { Send, Mic, MicOff, Wallet, ShoppingCart, TrendingUp, Bot, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -7,6 +9,35 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
+
+// Update global declarations for better types
+declare global {
+  interface Window {
+    webkitSpeechRecognition: new () => SpeechRecognition;
+  }
+}
+interface ISpeechRecognition extends EventTarget {
+  continuous: boolean;
+  interimResults: boolean;
+  lang: string;
+  onstart: (() => void) | null;
+  onend: (() => void) | null;
+  onresult: ((event: SpeechRecognitionEvent) => void) | null;
+  start(): void;
+  stop(): void;
+}
+
+type SpeechRecognition = ISpeechRecognition;
+
+type SpeechRecognitionEvent = Event & {
+  results: {
+    [index: number]: {
+      [index: number]: {
+        transcript: string;
+      };
+    };
+  };
+};
 
 interface Message {
   id: string
@@ -57,7 +88,6 @@ export default function ChatInterface() {
     setInputValue("")
     setIsTyping(true)
 
-    // Simulate AI response
     setTimeout(() => {
       const response = generateAIResponse(inputValue)
       setMessages((prev) => [...prev, response])
@@ -120,31 +150,35 @@ export default function ChatInterface() {
     }
   }
 
-  const addToWallet = (walletPass: any) => {
+  const addToWallet = (walletPass: Message["walletPass"]) => {
+    if (!walletPass) return;
     alert(`"${walletPass.title}" has been added to your Google Wallet!`)
   }
 
   const startVoiceInput = () => {
     if ("webkitSpeechRecognition" in window) {
-      const recognition = new (window as any).webkitSpeechRecognition()
-      recognition.continuous = false
-      recognition.interimResults = false
-      recognition.lang = "en-US"
+      const recognition = new (window as typeof window & {
+        webkitSpeechRecognition: new () => SpeechRecognition;
+      }).webkitSpeechRecognition();
 
-      recognition.onstart = () => setIsListening(true)
-      recognition.onend = () => setIsListening(false)
-      recognition.onresult = (event: any) => {
-        const transcript = event.results[0][0].transcript
-        setInputValue(transcript)
-      }
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
 
-      recognition.start()
+      recognition.onstart = () => setIsListening(true);
+      recognition.onend = () => setIsListening(false);
+      recognition.onresult = (event: SpeechRecognitionEvent) => {
+        const transcript = event.results[0][0].transcript;
+        setInputValue(transcript);
+      };
+
+      recognition.start();
     } else {
-      alert("Speech recognition not supported in this browser")
+      alert("Speech recognition not supported in this browser");
     }
   }
 
-  const quickQuestions = [
+  const quickQuestions: string[] = [
     "How much did I spend on groceries last month?",
     "What can I cook with my recent purchases?",
     "What ingredients do I need for pasta?",
@@ -162,7 +196,6 @@ export default function ChatInterface() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {/* Quick Questions */}
           <div className="mb-4">
             <p className="text-sm font-medium mb-2">Quick questions:</p>
             <div className="flex flex-wrap gap-2">
@@ -180,10 +213,9 @@ export default function ChatInterface() {
             </div>
           </div>
 
-          {/* Chat Messages */}
           <ScrollArea className="h-96 w-full border rounded-lg p-4">
             <div className="space-y-4">
-              {messages.map((message) => (
+              {messages.map((message: Message) => (
                 <div
                   key={message.id}
                   className={`flex gap-3 ${message.type === "user" ? "justify-end" : "justify-start"}`}
@@ -268,7 +300,6 @@ export default function ChatInterface() {
             <div ref={messagesEndRef} />
           </ScrollArea>
 
-          {/* Input Area */}
           <div className="flex gap-2 mt-4">
             <div className="flex-1 relative">
               <Input
@@ -294,7 +325,6 @@ export default function ChatInterface() {
         </CardContent>
       </Card>
 
-      {/* Features */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-4">
